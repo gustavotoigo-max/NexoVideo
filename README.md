@@ -1,9 +1,9 @@
 # NexoVideo
 
 Aplicativo Windows para analisar vídeos em lote e gerar candidatos separados de recuperação.
-**Estado: 0.1.0-alpha.1, pré-release de teste.** Não é beta homologada nem garantia de recuperação.
+**Estado: 0.1.0-alpha.2, pré-release de teste.** Não é beta homologada nem garantia de recuperação.
 
-Para outra máquina Windows x64, use o [release](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.1):
+Para outra máquina Windows x64, use o [release](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.2):
 instalador ou ZIP com .NET incluído. [Instalação e primeiro uso](docs/USAR_RELEASE.md).
 
 ## Usar a versão de desenvolvimento

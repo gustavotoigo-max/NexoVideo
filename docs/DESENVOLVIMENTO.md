@@ -1,4 +1,4 @@
-# Desenvolvimento — 0.1.0-alpha.1
+# Desenvolvimento — 0.1.0-alpha.2
 
 Aplicação WPF, motor e CLI executáveis em Windows. Interface adaptada ao quadro Compliance Engine do Figma fornecido, com fonte Inter incluída, ícones exportados e tema escuro na paleta NexoDesk.
 
@@ -38,7 +38,7 @@ São comportamentos observados nesta entrega, sem aprovação integral de todos 
 
 ## Verificação
 
-26 testes aprovados, nenhum ignorado, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
+27 testes aprovados, nenhum ignorado, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
 Quatro telas renderizadas e conferidas, incluindo diagnóstico de uma sessão de teste.
 
 Casos: amostragem início/fim; limite de janelas; exclusões; recuperação de item interrompido;
@@ -74,3 +74,12 @@ Locks separados `packages.win-x64.lock.json` preservam a restauração normal de
 12 módulos em `docs/requisitos/`; o PRD da raiz aponta para eles, sem duplicar requisitos.
 Backup anterior ao desenvolvimento: `.research/before-development-20261021.zip`.
 NexoDesk foi apenas consultado; seus tokens XAML de marca/tema claro foram reutilizados localmente.
+
+## Fluxo de avaliação da alpha.2
+
+Release `0.1.0-alpha.2` com instalador e ZIP, ambos com runtime incluído.
+Duplo clique em Análise/Relatórios abre o original no player padrão e prepara a avaliação do arquivo.
+Ao salvar com SHA-256 confirmado, o avanço opcional seleciona o próximo arquivo, inclusive entre páginas, sem abrir outro player.
+O teste WPF usa lançador simulado: verifica caminho com espaços/acentos, identidade da revisão, limpeza de campos,
+cliques fora das linhas e paginação; não presume que um player externo assistiu ou aprovou o vídeo.
+O release anterior `v0.1.0-alpha.1` permanece disponível; a nova versão tem tag própria.

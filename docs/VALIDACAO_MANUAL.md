@@ -8,7 +8,10 @@ Os vídeos não são incluídos no relatório.
 
 1. Prepare uma pasta com cópias de vídeos íntegros e danificados. Preserve formatos/codecs originais e mantenha o conjunto fixo até terminar.
 2. Para a primeira referência, selecione **Completo**, áudio e vídeo. Execute até encerrar a fila.
-3. Em **Relatórios**, selecione cada arquivo na lista e reproduza o original em um player independente.
+3. Em **Relatórios**, dê dois cliques no arquivo para abrir o original no player padrão do Windows.
+   O duplo clique também funciona na lista de **Análise** e leva à avaliação do mesmo arquivo.
+   Como alternativa, selecione e use **Abrir selecionado no player padrão**.
+   A abertura é registrada como solicitação; não comprova reprodução, duração assistida ou resultado.
    Registre o avaliador, player/versão, problema observado e qualidade percebida. A lista omite o diagnóstico automático para reduzir influência.
 4. Nas notas, informe trilha, minuto/segundo e sintoma: bloco visual, tela preta, áudio ausente, ruído, travamento ou perda de sincronia.
    Registre também se a ausência de áudio é uma característica conhecida da gravação.
@@ -17,6 +20,9 @@ Os vídeos não são incluídos no relatório.
    Uma inspeção parcial pode ser salva, mas não entra na matriz. Use **Inconclusivo** se não conseguir julgar.
 6. Clique em **Salvar avaliação e conferir SHA-256**. O aplicativo relê o arquivo para confirmar os mesmos bytes da análise.
    Se mudou, faça uma nova análise. Arquivos removidos precisam voltar ao caminho original para essa verificação.
+   Com **Selecionar o próximo arquivo após salvar** marcado, a seleção avança inclusive para a próxima página.
+   O próximo vídeo só abre com um novo duplo clique; veredito, confirmações e notas não são copiados.
+   Desmarque essa opção para continuar no arquivo salvo. Avaliador e player são mantidos para facilitar a rodada.
 7. Ao terminar a amostra, clique em **Calcular comparação** e **Exportar relatório completo JSON**.
    O JSON é o arquivo que deve acompanhar a avaliação posterior. Preserve-o com a identificação da rodada.
 

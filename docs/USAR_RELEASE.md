@@ -1,23 +1,24 @@
-# NexoVideo 0.1.0-alpha.1 — usar em outra máquina
+# NexoVideo 0.1.0-alpha.2 — usar em outra máquina
 
 Versão inicial para testes em **Windows 10 22H2 ou Windows 11, x64**. Testada no ambiente de desenvolvimento;
 a homologação dos demais computadores e do corpus real continua pendente. ARM64 nativo e Windows 32 bits não estão incluídos.
 
 ## Instalação recomendada
 
-1. Baixe `NexoVideo-0.1.0-alpha.1-win-x64-Setup.exe` no [release oficial](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.1).
+1. Baixe `NexoVideo-0.1.0-alpha.2-win-x64-Setup.exe` no [release oficial](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.2).
 2. Execute o instalador. A instalação é por usuário e não exige administrador. O runtime .NET 10.0.13 já está incluído.
 3. Abra o NexoVideo. Em **Configurações**, clique em **Baixar FFmpeg verificado** e aguarde cerca de 115 MB de download.
    O pacote é obtido diretamente do fornecedor Gyan, com versão 9.0.2 e SHA-256 fixos. As licenças e os documentos originais são preservados.
 4. Selecione a pasta de cópias dos vídeos e inicie uma análise. Para a avaliação inicial, use **Completo**, áudio e vídeo.
-5. Em **Relatórios**, registre sua avaliação manual e exporte o JSON completo. Veja `VALIDACAO_MANUAL.md` incluído no pacote.
+5. Dê dois cliques no arquivo em **Análise** ou **Relatórios** para abrir no player padrão e preparar a avaliação. Ao salvar, o avanço ao próximo arquivo é opcional, sem reprodução automática.
+6. Em **Relatórios**, registre sua avaliação manual e exporte o JSON completo. Veja `VALIDACAO_MANUAL.md` incluído no pacote.
 
 O aplicativo e o instalador ainda não têm assinatura de código. Windows/SmartScreen pode exibir aviso de editor desconhecido;
 confirme a origem e o SHA-256 antes de executar, respeitando a política do computador. Não é necessário desativar o antivírus.
 
 ## Alternativa portátil
 
-Baixe `NexoVideo-0.1.0-alpha.1-win-x64-portable.zip`, extraia **a pasta inteira** e abra `NexoVideo.exe`.
+Baixe `NexoVideo-0.1.0-alpha.2-win-x64-portable.zip`, extraia **a pasta inteira** e abra `NexoVideo.exe`.
 Mantenha todas as DLLs e subpastas. O pacote inclui o runtime e não precisa instalar o .NET separadamente.
 “Portátil” significa execução sem instalador; banco, configurações e ferramentas continuam no perfil do usuário, não junto do executável.
 
@@ -44,3 +45,8 @@ O Untrunc é opcional: não acompanha este release; configure um executável obt
 - Atualização automática ainda indisponível: baixe os próximos pacotes no GitHub.
 - Recuperação permanece experimental e cria candidatos separados; “concluído” não garante integridade visual ou sonora.
 - Licenças dos componentes acompanham o pacote. Os ícones desta distribuição são vetores próprios; os PNGs exportados do kit Figma não são incorporados.
+
+## Atualizar a partir da alpha.1
+
+Feche o NexoVideo e execute o novo instalador na mesma conta Windows. A pasta de dados e as ferramentas já preparadas são reutilizadas.
+Com o ZIP, extraia em uma pasta nova e abra o novo executável. O app mostra `0.1.0-alpha.2` na barra superior.

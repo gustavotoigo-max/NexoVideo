@@ -130,6 +130,12 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "NexoVideo": {
+        "type": "Project",
+        "dependencies": {
+          "NexoVideo.Core": "[0.1.0-alpha.1, )"
+        }
+      },
       "nexovideo.core": {
         "type": "Project",
         "dependencies": {

@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Diagnostics;
+using System.Windows.Input;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -22,6 +24,9 @@ public partial class MainWindow : Window
     private QueueCoordinator? _coordinator;
     private CancellationTokenSource? _cancellation;
     private Task? _activeTask;
+    private Task _refreshTask = Task.CompletedTask, _reviewLoad = Task.CompletedTask;
+    private readonly Action<string> _openFile;
+    private bool _openingFile;
     private int _page;
     private bool _busy, _refreshRequested, _refreshBusy, _closeReady;
     private long _detailRequest, _reviewRequest;
@@ -41,9 +46,14 @@ public partial class MainWindow : Window
         }
     }
 
-    public MainWindow(string data)
+    public MainWindow(string data, Action<string>? openFile = null)
     {
-        InitializeComponent(); _data = data; _store = new(Path.Combine(data, "nexovideo.db"));
+        InitializeComponent();
+        _openFile = openFile ?? (path =>
+        {
+            using var process = Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true, Verb = "open" });
+        });
+        _data = data; _store = new(Path.Combine(data, "nexovideo.db"));
         foreach (var extension in Formats.All)
         {
             var control = new CheckBox
@@ -200,9 +210,16 @@ public partial class MainWindow : Window
         }
     }
 
-    private async Task RefreshAsync()
+    private Task RefreshAsync()
     {
-        if (_refreshBusy || _job is null) return;
+        if (_job is null) return Task.CompletedTask;
+        if (_refreshBusy) return _refreshTask;
+        return _refreshTask = RefreshPageAsync();
+    }
+
+    private async Task RefreshPageAsync()
+    {
+        if (_job is null) return;
         _refreshBusy = true;
         try
         {
@@ -244,10 +261,21 @@ public partial class MainWindow : Window
 
     private async void Review_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        _reviewLoad = LoadReviewAsync(ReviewGrid.SelectedItem as FileRow);
+        await _reviewLoad;
+    }
+
+    private async Task LoadReviewAsync(FileRow? row)
+    {
         var request = Interlocked.Increment(ref _reviewRequest);
         _reviewTarget = null;
-        if (ReviewGrid.SelectedItem is not FileRow row) return;
+        // Nunca transportar o veredito, as confirmações ou as notas de um arquivo para outro.
+        HumanVerdictBox.SelectedIndex = SatisfactionBox.SelectedIndex = 0;
+        WholeFileCheck.IsChecked = CouldNotOpenCheck.IsChecked = false;
+        ReviewNotesBox.Text = "";
+        if (row is null) { ReviewPath.Text = "Selecione um arquivo já processado."; return; }
         ReviewPath.Text = row.Item.Path;
+        ReviewStatus.Text = "Carregando a avaliação deste arquivo...";
         try
         {
             var data = await Task.Run(() => (result: _store.Detail(row.Id), reviews: _store.ReviewHistory(row.Id)));
@@ -267,6 +295,66 @@ public partial class MainWindow : Window
         catch (Exception ex) { ShowError(ex); }
     }
 
+    private async void Video_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.Left || sender is not DataGrid grid || e.OriginalSource is not DependencyObject source) return;
+        // Cabeçalhos, barras de rolagem e espaço vazio não abrem o item previamente selecionado.
+        if (ItemsControl.ContainerFromElement(grid, source) is not DataGridRow { Item: FileRow row }) return;
+        e.Handled = true;
+        await OpenForReviewAsync(row);
+    }
+
+    private async void OpenReview_Click(object sender, RoutedEventArgs e)
+    {
+        if (ReviewGrid.SelectedItem is FileRow row) await OpenForReviewAsync(row);
+        else ReviewStatus.Text = "Selecione o arquivo que deseja abrir.";
+    }
+
+    private async Task OpenForReviewAsync(FileRow row)
+    {
+        if (_busy || _openingFile) return;
+        _openingFile = true;
+        try
+        {
+            SelectPage(2); ReviewGrid.SelectedItem = row;
+            await _reviewLoad;
+            if (_busy || (ReviewGrid.SelectedItem as FileRow)?.Id != row.Id) return;
+            var path = Path.GetFullPath(row.Item.Path);
+            if (!File.Exists(path)) throw new FileNotFoundException("Arquivo não encontrado. Confira o caminho antes de avaliar.", path);
+            _openFile(path);
+            ReviewStatus.Text = _reviewTarget is null ? "Abertura solicitada ao player padrão. Reanalise este arquivo antes de registrar uma avaliação." :
+                "Abertura solicitada ao player padrão. Após avaliar, preencha o resultado e clique em Salvar avaliação.";
+            try { await Task.Run(() => _store.Event(row.Item.JobId, $"Abertura solicitada ao player padrão; arquivo_id={row.Id}; caminho={path}. Não comprova reprodução ou avaliação.")); }
+            catch (Exception ex) { ShowError(new IOException("O arquivo foi encaminhado ao player, mas não foi possível registrar o evento de abertura.", ex)); }
+        }
+        catch (Exception ex) when (ex is IOException or Win32Exception or UnauthorizedAccessException or InvalidOperationException)
+        {
+            ReviewStatus.Text = "Não foi possível abrir no player. Isso não preenche nem classifica a avaliação automaticamente.";
+            ShowError(new IOException("Não foi possível abrir o arquivo. Confira se ele existe e se há um player padrão associado ao formato.", ex));
+        }
+        finally { _openingFile = false; }
+    }
+
+    private async Task<bool> AdvanceReviewAsync(long savedId)
+    {
+        await RefreshAsync();
+        if (_job is null) return false;
+        var rows = ReviewGrid.Items.Cast<FileRow>().ToArray();
+        var index = Array.FindIndex(rows, r => r.Id == savedId);
+        if (index < 0) return false;
+        if (index + 1 == rows.Length)
+        {
+            var counts = await Task.Run(() => _store.Counts(_job.Id));
+            if ((_page + 1L) * 100 >= counts.Total) return false;
+            _page++; await RefreshAsync();
+            rows = ReviewGrid.Items.Cast<FileRow>().ToArray(); index = -1;
+        }
+        if (index + 1 >= rows.Length) return false;
+        ReviewGrid.SelectedItem = rows[index + 1]; ReviewGrid.ScrollIntoView(rows[index + 1]);
+        await _reviewLoad;
+        return true;
+    }
+
     private async void SaveReview_Click(object sender, RoutedEventArgs e)
     {
         if (_busy) return;
@@ -281,7 +369,19 @@ public partial class MainWindow : Window
             ReviewStatus.Text = "Conferindo os bytes antes de salvar a avaliação...";
             var operation = new ValidationService(_store).SaveReviewAsync(target.FileId, review, _cancellation.Token);
             _activeTask = operation; await operation;
-            ReviewStatus.Text = "Avaliação salva; SHA-256 confirmado. Calcule ou exporte a comparação quando terminar a amostra.";
+            var savedName = Path.GetFileName(ReviewPath.Text);
+            ReviewStatus.Text = "Avaliação salva; SHA-256 confirmado.";
+            if (AdvanceReviewCheck.IsChecked == true)
+            {
+                try
+                {
+                    var advance = AdvanceReviewAsync(target.FileId); _activeTask = advance;
+                    var moved = await advance;
+                    ReviewStatus.Text = moved ? $"Avaliação de {savedName} salva. Próximo arquivo selecionado; dois cliques para abrir." :
+                        $"Avaliação de {savedName} salva. Fim da lista; calcule ou exporte a comparação.";
+                }
+                catch (Exception ex) { ReviewStatus.Text = "Avaliação salva; não foi possível selecionar o próximo arquivo."; ShowError(ex); }
+            }
         }
         catch (OperationCanceledException) { ReviewStatus.Text = "Conferência cancelada; avaliação não salva."; }
         catch (Exception ex) { ReviewStatus.Text = "Avaliação não salva."; ShowError(ex); }
