@@ -1,0 +1,139 @@
+{
+  "video_frames": [
+    80,
+    80
+  ],
+  "video_order_equal": true,
+  "video_multiset_equal": true,
+  "audio_bytes": [
+    768000,
+    770048
+  ],
+  "audio_equal_after_removing_1024_priming_samples": true,
+  "audio_equal": false,
+  "flv_initial_units_by_output_stream": {
+    "0": 10,
+    "1": 39
+  },
+  "commands": [
+    {
+      "name": "av.mp4",
+      "argv": [
+        "C:\\Projetos\\NexoVideo\\.research\\tools\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe",
+        "-hide_banner",
+        "-nostdin",
+        "-v",
+        "warning",
+        "-threads",
+        "1",
+        "-i",
+        "C:\\Projetos\\NexoVideo\\.research\\run-01\\av.mp4",
+        "-map",
+        "0:v:0",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "-"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "name": "missing_moov.mp4_fixed.mp4",
+      "argv": [
+        "C:\\Projetos\\NexoVideo\\.research\\tools\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe",
+        "-hide_banner",
+        "-nostdin",
+        "-v",
+        "warning",
+        "-threads",
+        "1",
+        "-i",
+        "C:\\Projetos\\NexoVideo\\.research\\run-01\\missing_moov.mp4_fixed.mp4",
+        "-map",
+        "0:v:0",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "-"
+      ],
+      "exit_code": 0,
+      "stderr": "[vost#0:0/rawvideo @ 0000021f8715a300] Non-monotonic DTS; previous: 79, current: 75; changing to 79. This may result in incorrect timestamps in the output file.\r\n"
+    },
+    {
+      "name": "pcm:av.mp4",
+      "argv": [
+        "C:\\Projetos\\NexoVideo\\.research\\tools\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe",
+        "-hide_banner",
+        "-nostdin",
+        "-v",
+        "warning",
+        "-threads",
+        "1",
+        "-i",
+        "C:\\Projetos\\NexoVideo\\.research\\run-01\\av.mp4",
+        "-map",
+        "0:a:0",
+        "-f",
+        "s16le",
+        "-"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "name": "pcm:missing_moov.mp4_fixed.mp4",
+      "argv": [
+        "C:\\Projetos\\NexoVideo\\.research\\tools\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe",
+        "-hide_banner",
+        "-nostdin",
+        "-v",
+        "warning",
+        "-threads",
+        "1",
+        "-i",
+        "C:\\Projetos\\NexoVideo\\.research\\run-01\\missing_moov.mp4_fixed.mp4",
+        "-map",
+        "0:a:0",
+        "-f",
+        "s16le",
+        "-"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "name": "flv_inicio_sem_seek",
+      "argv": [
+        "C:\\Projetos\\NexoVideo\\.research\\tools\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe",
+        "-hide_banner",
+        "-nostdin",
+        "-v",
+        "warning",
+        "-threads",
+        "1",
+        "-i",
+        "C:\\Projetos\\NexoVideo\\.research\\run-01\\av.flv",
+        "-t",
+        "1",
+        "-map",
+        "0:v:0",
+        "-map",
+        "0:a:0",
+        "-fps_mode:v",
+        "passthrough",
+        "-f",
+        "framehash",
+        "-"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    }
+  ]
+}

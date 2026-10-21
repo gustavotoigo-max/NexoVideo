@@ -1,0 +1,20 @@
+.research/
+__pycache__/
+*.pyc
+.packages/
+**/bin/
+**/obj/
+artifacts/
+.vs/
+*.user
+samples/
+
+# Dados locais e credenciais de desenvolvimento
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3

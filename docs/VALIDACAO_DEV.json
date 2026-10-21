@@ -1,0 +1,52 @@
+{
+  "version": "0.1.0-dev",
+  "date": "2026-10-21",
+  "test_counts": {
+    "total": "23",
+    "executed": "23",
+    "passed": "23",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "build": "Release framework-dependent Windows",
+  "exe_sha256": "9f03e7342f3e7d775c9463117df16f60f3f6795485e7a89a01e16d77517e184d",
+  "sqlite_native": "3.53.4",
+  "requirements_modules_preserved": 12,
+  "markdown_links_ok": true,
+  "limitations": "Internal development build; real corrupted corpus and beta acceptance pending.",
+  "ui_figma": {
+    "file": "fQRvjiFcx7wXJw9932eLLh",
+    "frame": "16:1153",
+    "screens_rendered": 4,
+    "compact_rendered": true,
+    "embedded_inter_verified": true,
+    "local_images_and_geometry_verified": 9,
+    "app_dll_sha256": "7a0dcee8201befc1f89ebe8894838ce9d4bb41b849b1dd05bcb0432e23f41fe6",
+    "core_changed": true
+  },
+  "app_dll_sha256": "7a0dcee8201befc1f89ebe8894838ce9d4bb41b849b1dd05bcb0432e23f41fe6",
+  "core_dll_sha256": "98956542f27e8e40f9d0fde7d0a9ba6a7ec9f02e45e3bdcacf4bbdc04f6baf2f",
+  "collector": {
+    "schema": "nexovideo.validation/1",
+    "policy": "alerts-v1",
+    "synthetic_files": 3,
+    "clear": 1,
+    "alert": 2,
+    "manually_evaluated": 0,
+    "all_log_hashes_match": true,
+    "report_matches_published_engine": true,
+    "ui_rendered": true,
+    "real_corpus_pending": true
+  }
+}

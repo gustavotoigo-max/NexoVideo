@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="folder_copy">
+<mask id="mask0_0_4" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+<rect id="Bounding box" width="20" height="20" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_0_4)">
+<path id="folder_copy_2" d="M2.5 17C2.09722 17 1.74653 16.8507 1.44792 16.5521C1.14931 16.2535 1 15.9028 1 15.5V5.5H2.5V15.5H16V17H2.5ZM5.5 14C5.09722 14 4.74653 13.8507 4.44792 13.5521C4.14931 13.2535 4 12.9028 4 12.5V3.5C4 3.0875 4.14931 2.73438 4.44792 2.44063C4.74653 2.14688 5.09722 2 5.5 2H9.02083L11.0208 4H16.5C16.9125 4 17.2656 4.14688 17.5594 4.44063C17.8531 4.73438 18 5.0875 18 5.5V12.5C18 12.9028 17.8531 13.2535 17.5594 13.5521C17.2656 13.8507 16.9125 14 16.5 14H5.5ZM5.5 12.5H16.5V5.5H10.4167L8.41667 3.5H5.5V12.5Z" fill="#A8A0B6"/>
+</g>
+</g>
+</svg>

@@ -1,0 +1,69 @@
+{
+  "fileKey": "fQRvjiFcx7wXJw9932eLLh",
+  "frame": "16:1153",
+  "assets": [
+    {
+      "name": "brand",
+      "node": "16:1158",
+      "png_sha256": "c1e1dd6910e96c5378d785246af2412ca7e92b4fe24e3ead578e0bc2a5b75561",
+      "svg_sha256": "713817c7f6e49a6f4c55409be697cdf9b0f87eb1add2da636c14ed529c8b061b",
+      "bytes": 916
+    },
+    {
+      "name": "analysis",
+      "node": "16:1178",
+      "png_sha256": "00c562a82ac71bfe11fac2a4ca03b44394f0964884755e48f9f862f110bd3771",
+      "svg_sha256": "626110b313d080e1736959964e4acd9ae37892cac11bac0c8a9215735f0a1238",
+      "bytes": 289
+    },
+    {
+      "name": "recovery",
+      "node": "16:1240",
+      "png_sha256": "dbed2a3b707653e58f73b2ee0aa392efc09d3f69b5781046876b93e4fe16371b",
+      "svg_sha256": "c0e0c8bfe54626e9eb21f19e6b6a0b4bd8520fd88021cddd123acb2b62536117",
+      "bytes": 329
+    },
+    {
+      "name": "reports",
+      "node": "16:1216",
+      "png_sha256": "5284bb082c364c2a03ff70085f7680ddc8bb02949604aa1dca444b8fa7e3302e",
+      "svg_sha256": "96df96688a95b1fdb8abe311e6e9ddc453a1ce1ff0612eeba208090052afc194",
+      "bytes": 332
+    },
+    {
+      "name": "settings-nav",
+      "node": "16:1303",
+      "png_sha256": "19bbc38bd3544fd6da4982b7eb0ed713d1338bf538678041c93e9f1e47ee8a30",
+      "svg_sha256": "c5424c2154d789bc4e470961b37428bbd329854cd4f6c76369912419c762ce7e",
+      "bytes": 991
+    },
+    {
+      "name": "metric-total",
+      "node": "16:1356",
+      "png_sha256": "cbb969093baf5f7539347225c7e6e1a0982edd37f31cc2ebc0653ae5572385b3",
+      "svg_sha256": "2c4d1af3b74449220de38138b3ca1af9f3a71897bdd2310013342043ec4fd057",
+      "bytes": 586
+    },
+    {
+      "name": "metric-completed",
+      "node": "16:1326",
+      "png_sha256": "0b048c1943105f6cdf2e49bc488b2156798a01b309218da017045ee45745cb0a",
+      "svg_sha256": "ac86c3f49fce5b2dd9b65a5aca4a99c24e6eb3395a2731eb087ba0a882b534e1",
+      "bytes": 869
+    },
+    {
+      "name": "metric-failed",
+      "node": "16:1371",
+      "png_sha256": "7c4fcb2179ebe3c4213d39fcc312406d88b2a3855572f9c7703781642319efcf",
+      "svg_sha256": "42b4032e10920fcd88c76028f50a1b4995a0dd8af6f646a6435980c5d50877f4",
+      "bytes": 547
+    },
+    {
+      "name": "metric-pending",
+      "node": "16:1341",
+      "png_sha256": "fc9be9c80e7379045b9e3163add32186db9854255eb8585aeb58f11bd98b3647",
+      "svg_sha256": "ed3621c0a5529886135e7c58d79a61007661cce17dec7b988ac0d0df5de7bc8d",
+      "bytes": 369
+    }
+  ]
+}

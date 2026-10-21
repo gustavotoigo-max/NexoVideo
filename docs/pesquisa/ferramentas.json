@@ -1,0 +1,17 @@
+[
+  {
+    "tool": "ffmpeg",
+    "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+    "archive_sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+    "bytes": 114768076,
+    "checksum_verified": true
+  },
+  {
+    "tool": "untrunc",
+    "url": "https://github.com/anthwlock/untrunc/releases/download/latest/untrunc_x64.zip",
+    "archive_sha256": "bf807597c152376d9c39f358601f7d2320cedce305080ce73d606cbf58050ebd",
+    "bytes": 13107908,
+    "checksum_verified": true,
+    "version": "version 'v1-9d86ec9-dirty' using ffmpeg '3.3.4' Lavc57.89.100"
+  }
+]
