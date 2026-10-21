@@ -1,0 +1,37 @@
+NexoVideo 0.1.0-alpha.1 — avisos de distribuição
+
+Pacote de teste publicado por gustavotoigo-max:
+https://github.com/gustavotoigo-max/NexoVideo
+A licença final do código do produto permanece pendente. Não se aplica automaticamente
+ao NexoVideo a licença de uma dependência listada abaixo.
+
+Componentes incluídos:
+- .NET Runtime e Windows Desktop Runtime 10.0.13: Microsoft / .NET Foundation,
+  MIT e avisos de terceiros preservados em licenses/dotnet-* e windowsdesktop-*.
+  https://github.com/dotnet/runtime
+  https://github.com/dotnet/wpf
+- Microsoft.Data.Sqlite.Core 10.0.13: MIT; licença em licenses/Microsoft.Data.Sqlite-LICENSE.txt.
+  https://github.com/dotnet/efcore
+- SQLitePCLRaw (bundle/config/core/provider) 3.0.5: Apache-2.0;
+  licença completa em licenses/SQLitePCLRaw-LICENSE.txt. Sem alterações locais.
+  https://github.com/ericsink/SQLitePCL.raw
+- SQLite nativo 3.53.4: aviso original em licenses/sqlite-LICENSE.txt.
+  https://sqlite.org/copyright.html
+- Fonte Inter 4.1: Rasmus Andersson, SIL Open Font License 1.1;
+  licença completa em licenses/Inter-OFL.txt. Sem instalação global da fonte.
+  https://github.com/rsms/inter
+- Instalador construído com Inno Setup; copyrights e avisos do compilador preservados.
+  https://jrsoftware.org
+
+Ferramentas externas, não incluídas nos binários deste release:
+- FFmpeg / FFprobe 9.0.2, build essentials de Gyan, GPLv3.
+  O botão de preparação baixa o ZIP original diretamente do fornecedor,
+  verifica SHA-256 e mantém LICENSE, README e documentação do próprio pacote.
+  https://www.gyan.dev/ffmpeg/builds/
+  https://ffmpeg.org/legal.html
+- Untrunc é opcional e deve ser obtido/configurado separadamente.
+  https://github.com/anthwlock/untrunc
+
+Os ícones incorporados nesta versão são vetores próprios do NexoVideo.
+O layout teve como referência o Fortify360 Community fornecido pelo usuário;
+os arquivos gráficos exportados desse kit não são incorporados à aplicação distribuída.

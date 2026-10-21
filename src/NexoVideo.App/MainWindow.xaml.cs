@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
@@ -52,6 +54,7 @@ public partial class MainWindow : Window
             _formats.Add(extension, control); FormatsPanel.Children.Add(control);
         }
         DataPathText.Text = _data;
+        VersionText.Text = typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "unknown";
         SelectPage(0);
         DetailBox.VerticalContentAlignment = VerticalAlignment.Top;
         _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
@@ -86,6 +89,7 @@ public partial class MainWindow : Window
         }
         else
         {
+            #if DEBUG
             // Somente ambiente de desenvolvimento: reutiliza ferramentas já baixadas na pesquisa.
             for (DirectoryInfo? root = new(AppContext.BaseDirectory); root is not null; root = root.Parent)
             {
@@ -95,7 +99,19 @@ public partial class MainWindow : Window
                 MpegBox.Text = Path.Combine(Path.GetDirectoryName(ProbeBox.Text) ?? "", "ffmpeg.exe");
                 UntruncBox.Text = Path.Combine(tools, "untrunc", "untrunc_x64", "untrunc.exe"); break;
             }
+            #endif
         }
+        if (!File.Exists(ProbeBox.Text) || !File.Exists(MpegBox.Text))
+        {
+            var found = ToolInstaller.Find(_data, AppContext.BaseDirectory);
+            if (found is not null) { ProbeBox.Text = found.Ffprobe; MpegBox.Text = found.Ffmpeg; }
+        }
+        if (!File.Exists(ProbeBox.Text) || !File.Exists(MpegBox.Text))
+        {
+            ToolInstallStatus.Text = "Primeiro uso: baixe o pacote verificado, importe o ZIP original ou escolha ferramentas existentes.";
+            SelectPage(3);
+        }
+        else ToolInstallStatus.Text = "FFmpeg e FFprobe encontrados. Confira os caminhos abaixo.";
         _job = loaded.job;
         if (_job is not null && string.IsNullOrWhiteSpace(SourceBox.Text)) SourceBox.Text = _job.Source;
         StageText.Text = _job is null ? "Pronto para iniciar" : "Sessão anterior disponível para consulta ou retomada";
@@ -318,6 +334,34 @@ public partial class MainWindow : Window
     private void Source_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFolderDialog { Title = "Escolha a pasta dos vídeos" }; if (dialog.ShowDialog(this) == true) SourceBox.Text = dialog.FolderName; }
     private void Output_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFolderDialog { Title = "Escolha a pasta dos candidatos" }; if (dialog.ShowDialog(this) == true) OutputBox.Text = dialog.FolderName; }
     private void Reference_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFileDialog { Title = "Vídeo íntegro de referência", Filter = "Vídeos|*.mp4;*.mov;*.m4v;*.3gp|Todos os arquivos|*.*" }; if (dialog.ShowDialog(this) == true) ReferenceBox.Text = dialog.FileName; }
+    private async void DownloadTools_Click(object sender, RoutedEventArgs e) => await InstallToolsAsync(null);
+    private async void ImportTools_Click(object sender, RoutedEventArgs e)
+    {
+        if (_busy) return;
+        var dialog = new OpenFileDialog { Filter = "Pacote ZIP original do FFmpeg 9.0.2|*.zip", Title = "Selecione ffmpeg-9.0.2-essentials_build.zip" };
+        if (dialog.ShowDialog(this) == true) await InstallToolsAsync(dialog.FileName);
+    }
+    private async Task InstallToolsAsync(string? archive)
+    {
+        if (_busy) return;
+        try
+        {
+            _cancellation = new(); SetBusy(true); PauseButton.IsEnabled = false;
+            using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(20) };
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("NexoVideo/" + VersionText.Text);
+            var progress = new Progress<string>(message => { ToolInstallStatus.Text = message; StageText.Text = message; });
+            var operation = new ToolInstaller(client).InstallAsync(_data, archive, progress, _cancellation.Token);
+            _activeTask = operation; var tools = await operation;
+            ProbeBox.Text = tools.Ffprobe; MpegBox.Text = tools.Ffmpeg;
+            await SaveSettingsAsync();
+            ToolInstallStatus.Text = "Ferramentas verificadas e configuradas. Pronto para analisar; Untrunc permanece opcional.";
+            StageText.Text = "Ferramentas prontas para uso";
+        }
+        catch (OperationCanceledException) { ToolInstallStatus.Text = "Preparação cancelada. Nenhuma ferramenta parcial foi ativada."; }
+        catch (Exception ex) { ToolInstallStatus.Text = "Não foi possível preparar. Você pode importar o ZIP original ou escolher executáveis existentes."; ShowError(ex); }
+        finally { _activeTask = null; _cancellation?.Dispose(); _cancellation = null; SetBusy(false); }
+    }
+
     private void Tool_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog { Filter = "Executáveis|*.exe", Title = "Escolha a ferramenta" };

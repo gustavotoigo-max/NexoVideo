@@ -1,7 +1,10 @@
 # NexoVideo
 
 Aplicativo Windows para analisar vídeos em lote e gerar candidatos separados de recuperação.
-**Estado: 0.1.0-dev, versão interna.** Não é beta homologada nem garantia de recuperação.
+**Estado: 0.1.0-alpha.1, pré-release de teste.** Não é beta homologada nem garantia de recuperação.
+
+Para outra máquina Windows x64, use o [release](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.1):
+instalador ou ZIP com .NET incluído. [Instalação e primeiro uso](docs/USAR_RELEASE.md).
 
 ## Usar a versão de desenvolvimento
 
@@ -74,6 +77,7 @@ Use `--help` para opções. A linha de comando compartilha o bloqueio de anális
 - Memória da árvore de ferramentas é limitada por Windows Job Object; não há teto validado para todo o aplicativo.
 - ETA, comparação detalhada original/candidato, perfis de mídia instável e ferramentas adicionais permanecem pendentes.
 - Interface adaptada ao Figma fornecido, com tema escuro NexoDesk e Inter incluída; detalhes em [design](docs/DESIGN.md).
-- Elevação contínua, versão mínima do Windows, licenças do produto, instalador, release e atualizações pendentes.
+- Pacote alpha para Windows 10 22H2/11 x64; outras versões/arquiteturas e atualização automática seguem pendentes.
+- Elevação contínua e licença final do produto seguem pendentes; o instalador atual funciona por usuário.
 
 Mais detalhes: [arquitetura e estado](docs/DESENVOLVIMENTO.md), [índice](docs/INDEX.md).

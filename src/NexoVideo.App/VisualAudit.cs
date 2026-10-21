@@ -15,11 +15,11 @@ internal static class VisualAudit
         var images = new List<object>();
         void Visit(DependencyObject element)
         {
-            if (element is Image { Source: BitmapSource image } control)
+            if (element is Image { Source: { } image } control)
             {
                 var position = control.TransformToAncestor(root).Transform(new Point());
                 images.Add(new { asset = image.ToString(), width = control.ActualWidth,
-                    height = control.ActualHeight, pixelWidth = image.PixelWidth, pixelHeight = image.PixelHeight,
+                    height = control.ActualHeight, sourceKind = image.GetType().Name, pixelWidth = (image as BitmapSource)?.PixelWidth, pixelHeight = (image as BitmapSource)?.PixelHeight,
                     x = position.X, y = position.Y });
             }
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++) Visit(VisualTreeHelper.GetChild(element, i));

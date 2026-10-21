@@ -4,5 +4,5 @@
     <AssemblyName>NexoVideo</AssemblyName><ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../NexoVideo.Core/NexoVideo.Core.csproj" /></ItemGroup>
-  <ItemGroup><Resource Include="Assets/Figma/*.png" /><Resource Include="Assets/Fonts/*.ttf" /><Content Include="Assets/Fonts/OFL.txt" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><Resource Include="Assets/Fonts/*.ttf" /><Content Include="Assets/Fonts/OFL.txt" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

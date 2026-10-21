@@ -1,4 +1,4 @@
-# Desenvolvimento — 0.1.0-dev
+# Desenvolvimento — 0.1.0-alpha.1
 
 Aplicação WPF, motor e CLI executáveis em Windows. Interface adaptada ao quadro Compliance Engine do Figma fornecido, com fonte Inter incluída, ícones exportados e tema escuro na paleta NexoDesk.
 
@@ -11,7 +11,7 @@ Detalhes de referência, adaptações e conferência: [design](DESIGN.md).
 | NexoVideo.Cli | Mesmo motor sem interface gráfica |
 | NexoVideo.Tests | Persistência, sequência, processos, decode e candidatos |
 
-Executável: `artifacts/dev/NexoVideo.exe`. Entrega interna, com versionamento no GitHub autorizado; sem release, tag ou instalador.
+Executável: `artifacts/dev/NexoVideo.exe`. Primeiro pré-release autorizado com instalador Inno Setup e ZIP self-contained; [primeiro uso](USAR_RELEASE.md).
 
 ## Comportamentos implementados
 
@@ -38,7 +38,7 @@ São comportamentos observados nesta entrega, sem aprovação integral de todos 
 
 ## Verificação
 
-23 testes aprovados, nenhum ignorado, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
+26 testes aprovados, nenhum ignorado, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
 Quatro telas renderizadas e conferidas, incluindo diagnóstico de uma sessão de teste.
 
 Casos: amostragem início/fim; limite de janelas; exclusões; recuperação de item interrompido;
@@ -62,7 +62,12 @@ Pacotes travados em lock files. Auditoria online NuGet não executada no fallbac
 - Perfis de mídia instável, ferramentas adicionais, enxertos e operações transacionais na origem.
 - DS-07: `asInvoker` para desenvolvimento; elevação contínua segue pendente conforme o PRD.
 - Direitos de distribuição dos recursos Figma, acessibilidade, alternância de temas, Windows mínimo e ARM64.
-- Licenças, assinatura, Inno Setup, releases e atualização segura.
+- Licença final do produto, assinatura, homologação ampla e atualização segura.
+
+Empacotamento reproduzível: `scripts/empacotar_release.ps1`; exige SDK .NET e Inno Setup 6.
+O script gera manifesto do commit/arquivos e checksums; recusa sobrescrever uma pasta de saída existente.
+`-NuGetSource .research/nuget-feed` aplica o fallback local de TLS, sem auditoria online somente nessa execução.
+Locks separados `packages.win-x64.lock.json` preservam a restauração normal de desenvolvimento.
 
 ## Rastreabilidade
 

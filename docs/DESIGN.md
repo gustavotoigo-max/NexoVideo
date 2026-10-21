@@ -37,7 +37,7 @@ Frações de pixel dos ícones são preservadas no WPF apesar do arredondamento 
 
 Inter 4.1 veio do [projeto oficial](https://github.com/rsms/inter/releases/tag/v4.1), faces Regular, Medium,
 SemiBold e Bold, com licença OFL em `Assets/Fonts/OFL.txt`, também copiada ao build. Não há instalação global de fonte.
-Direitos de distribuição dos recursos do kit permanecem no checklist de licenciamento da versão formal.
+No pré-release, os gráficos exportados do kit foram substituídos por vetores próprios em `Themes/Icons.xaml`; os PNGs históricos permanecem como referência no repositório, fora dos recursos compilados. O layout e a paleta foram preservados.
 
 ## Conferência
 

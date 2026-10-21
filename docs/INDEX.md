@@ -1,7 +1,9 @@
 # NexoVideo — documentação
 
-Estado: **0.1.0-dev executável**, versão interna; beta, instalador e release pendentes.
+Estado: **0.1.0-alpha.1**, primeiro pré-release Windows x64; homologação beta pendente.
 
+- [Instalação em outras máquinas](USAR_RELEASE.md)
+- [Changelog do primeiro pré-release](releases/v0.1.0-alpha.1.md)
 - [Como executar](../README.md)
 - [Estado do desenvolvimento e verificações](DESENVOLVIMENTO.md)
 - [Coletor e comparação da avaliação manual](VALIDACAO_MANUAL.md)
