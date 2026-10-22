@@ -44,5 +44,5 @@ manualmente. Os primeiros candidatos disponíveis usam remux para MKV ou Untrunc
 Rodada seguinte: M4V, MTS/M2TS, MXF, DV, VOB, ASF, 3GP/3G2, OGV e MOD/TOD.
 R3D, BRAW, CRM, DAV e CIN precisam de investigação específica. A extensão não garante compatibilidade.
 
-Para comparar os resultados, siga o [procedimento de avaliação manual e coleta](VALIDACAO_MANUAL.md).
-Inclua controles íntegros; avaliar apenas arquivos com alerta impede medir falhas não detectadas.
+Para comparar os resultados, siga o [procedimento de coleta em lote](COLETA_EVIDENCIAS.md).
+Preserve controles íntegros e a referência do corruptor para comparar os resultados da mesma rodada.

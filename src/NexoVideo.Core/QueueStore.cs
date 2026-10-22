@@ -47,9 +47,6 @@ public sealed class QueueStore
             CREATE TABLE IF NOT EXISTS analysis_history(
                 id INTEGER PRIMARY KEY, file_id INTEGER NOT NULL REFERENCES files(id), result TEXT NOT NULL);
             CREATE INDEX IF NOT EXISTS ix_history_file ON analysis_history(file_id,id);
-            CREATE TABLE IF NOT EXISTS reviews(
-                id INTEGER PRIMARY KEY, file_id INTEGER NOT NULL REFERENCES files(id), review TEXT NOT NULL);
-            CREATE INDEX IF NOT EXISTS ix_reviews_file ON reviews(file_id,id);
             CREATE TABLE IF NOT EXISTS events(
                 id INTEGER PRIMARY KEY, job_id INTEGER NOT NULL REFERENCES jobs(id), message TEXT NOT NULL, created TEXT NOT NULL);
             """;
@@ -104,33 +101,18 @@ public sealed class QueueStore
             : throw new ArgumentException("Sessão não encontrada.");
     }
 
-    public IReadOnlyList<ManualReview> ReviewHistory(long fileId)
+    // Compatibilidade de leitura: não criar, apagar ou reinterpretar avaliações das versões antigas.
+    public void WriteLegacyReviewHistory(Utf8JsonWriter writer, long fileId)
     {
         using var connection = Connect(); using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='reviews';";
+        if ((long)command.ExecuteScalar()! == 0) return;
         command.CommandText = "SELECT review FROM reviews WHERE file_id=$id ORDER BY id;";
         command.Parameters.AddWithValue("$id", fileId); using var reader = command.ExecuteReader();
-        var reviews = new List<ManualReview>();
-        while (reader.Read()) reviews.Add(JsonSerializer.Deserialize<ManualReview>(reader.GetString(0), Json)!);
-        return reviews;
-    }
-
-    public void SaveReview(long fileId, ManualReview review)
-    {
-        if (!Enum.IsDefined(review.Verdict) || !Enum.IsDefined(review.Satisfaction) || review.Notes.Length > 8000
-            || review.Player.Length > 200 || string.IsNullOrWhiteSpace(review.Reviewer) || review.Reviewer.Length > 200)
-            throw new ArgumentException("Informe avaliador (até 200 caracteres), avaliação válida e notas de até 8.000 caracteres.");
-        if (review.CouldNotOpen && (review.WatchedWholeFile || review.Verdict != HumanVerdict.Problem))
-            throw new ArgumentException("Impossibilidade de abrir exige Problema observado e não pode ser marcada junto com reprodução inteira.");
-        using var connection = Connect(); using var transaction = connection.BeginTransaction();
-        using var command = connection.CreateCommand(); command.Transaction = transaction;
-        command.CommandText = "SELECT result FROM files WHERE id=$id AND state IN ('Completed','Failed','Cancelled');";
-        command.Parameters.AddWithValue("$id", fileId);
-        var evidence = command.ExecuteScalar() is string json ? JsonSerializer.Deserialize<AnalysisResult>(json, Json)?.Evidence : null;
-        if (evidence is null || evidence.AnalysisId != review.AnalysisId || evidence.Sha256 != review.Sha256 || review.Sha256.Length != 64)
-            throw new InvalidOperationException("A avaliação não corresponde à análise atual. Reanalise/atualize a seleção.");
-        command.CommandText = "INSERT INTO reviews(file_id,review) VALUES($id,$review);";
-        command.Parameters.AddWithValue("$review", JsonSerializer.Serialize(review, Json)); command.ExecuteNonQuery();
-        transaction.Commit();
+        if (!reader.Read()) return;
+        writer.WritePropertyName("legacy_review_history"); writer.WriteStartArray();
+        do { writer.WriteRawValue(reader.GetString(0)); } while (reader.Read());
+        writer.WriteEndArray();
     }
 
     public void WriteEvents(System.Text.Json.Utf8JsonWriter writer, long jobId)

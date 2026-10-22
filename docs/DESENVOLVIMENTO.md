@@ -1,6 +1,6 @@
-# Desenvolvimento — 0.1.0-alpha.2
+# Desenvolvimento — 0.1.0-alpha.3
 
-Aplicação WPF, motor e CLI executáveis em Windows. Interface adaptada ao quadro Compliance Engine do Figma fornecido, com fonte Inter incluída, ícones exportados e tema escuro na paleta NexoDesk.
+Aplicação WPF, motor e CLI executáveis em Windows. Interface adaptada ao quadro Compliance Engine do Figma fornecido, com fonte Inter incluída, ícones vetoriais próprios e tema escuro na paleta NexoDesk.
 
 Detalhes de referência, adaptações e conferência: [design](DESIGN.md).
 
@@ -31,23 +31,23 @@ Executável: `artifacts/dev/NexoVideo.exe`. Primeiro pré-release autorizado com
   Enumeração em profundidade, limite de 256 diretórios aninhados e eventos de falha no banco.
 - RC: remux e Untrunc com referência manual e cópias; candidato separado, novo diagnóstico completo e
   classificação experimental. Nenhum original é substituído/apagado.
-- Coletor: SHA-256, comandos/tempos/mensagens, histórico de análises e revisões humanas; comparação com exclusões explícitas, exportação com snapshot SQLite e logs embutidos. [Procedimento e limites](VALIDACAO_MANUAL.md).
+- Coletor: SHA-256, comandos/tempos/mensagens, histórico de análises; exportação com snapshot SQLite e logs embutidos. Avaliações anteriores são preservadas somente como legado. [Procedimento e limites](COLETA_EVIDENCIAS.md).
 - UI: configurações persistidas, estado/progresso, detalhes e exportação JSON paginada em streaming.
 
 São comportamentos observados nesta entrega, sem aprovação integral de todos os requisitos dos módulos.
 
 ## Verificação
 
-27 testes aprovados, nenhum ignorado, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
-Quatro telas renderizadas e conferidas, incluindo diagnóstico de uma sessão de teste.
+26 testes automatizados passaram, sem falhas ou ignorados, com ferramentas/corpus sintético da pesquisa. Build sem erros/avisos.
+Relatórios da alpha.3 renderizados e conferidos; quatro telas haviam sido verificadas na alpha.2.
 
 Casos: amostragem início/fim; limite de janelas; exclusões; recuperação de item interrompido;
 paginação e reivindicação única; término da árvore por timeout; cancelamento e reutilização do supervisor;
 MP4 sem índice/sem áudio; FLV com timestamps/fim efetivo; payload danificado com retorno zero;
 pausa/retomada sem repetir concluído; remux preservando origem/hierarquia; bloqueio entre coordenadores;
 saída grande limitada; Untrunc sobre cópias, preservando classificação experimental.
-Coletor: matriz/exclusões/denominadores, políticas de alerta, alteração de bytes com tamanho/data restaurados,
-exportação portátil e histórico, evidência do decoder real, cancelamento persistido e limites das mensagens.
+Coletor: políticas de alerta, exportação portátil em lote e preservação do legado, evidência do decoder real,
+cancelamento persistido e limites das mensagens.
 
 TRX: `.research/test-results/`. Mídias/logs: `.research/tests/`. Capturas: `.research/ui-page-0.png` a `ui-page-3.png`.
 Pacotes travados em lock files. Auditoria online NuGet não executada no fallback de TLS.
@@ -75,11 +75,9 @@ Locks separados `packages.win-x64.lock.json` preservam a restauração normal de
 Backup anterior ao desenvolvimento: `.research/before-development-20261021.zip`.
 NexoDesk foi apenas consultado; seus tokens XAML de marca/tema claro foram reutilizados localmente.
 
-## Fluxo de avaliação da alpha.2
+## Testes em lote da alpha.3
 
-Release `0.1.0-alpha.2` com instalador e ZIP, ambos com runtime incluído.
-Duplo clique em Análise/Relatórios abre o original no player padrão e prepara a avaliação do arquivo.
-Ao salvar com SHA-256 confirmado, o avanço opcional seleciona o próximo arquivo, inclusive entre páginas, sem abrir outro player.
-O teste WPF usa lançador simulado: verifica caminho com espaços/acentos, identidade da revisão, limpeza de campos,
-cliques fora das linhas e paginação; não presume que um player externo assistiu ou aprovou o vídeo.
-O release anterior `v0.1.0-alpha.1` permanece disponível; a nova versão tem tag própria.
+Removidos avaliação por vídeo, abertura de player para esse fluxo e cálculo de métricas baseado em revisões individuais.
+A tela de Relatórios contém a exportação de evidências de toda a sessão (`nexovideo.evidence/2`).
+Testes cobrem exportação de 205 arquivos sem interação manual, ausência dos controles antigos e preservação do legado.
+Comparação com a lista externa do corruptor é continuidade pendente, sem importação implementada nesta etapa.

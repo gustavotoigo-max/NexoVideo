@@ -1,12 +1,12 @@
 # NexoVideo — documentação
 
-Estado: **0.1.0-alpha.2**, pré-release Windows x64; homologação beta pendente.
+Estado: **0.1.0-alpha.3**, pré-release Windows x64; homologação beta pendente.
 
 - [Instalação em outras máquinas](USAR_RELEASE.md)
-- [Changelog do pré-release atual](releases/v0.1.0-alpha.2.md)
+- [Changelog do pré-release atual](releases/v0.1.0-alpha.3.md)
 - [Como executar](../README.md)
 - [Estado do desenvolvimento e verificações](DESENVOLVIMENTO.md)
-- [Coletor e comparação da avaliação manual](VALIDACAO_MANUAL.md)
+- [Coleta de evidências para testes em lote](COLETA_EVIDENCIAS.md)
 - [Formatos e preparação dos vídeos](PREPARAR_VIDEOS.md)
 - [Design e referência Figma](DESIGN.md)
 - [Decisões atuais](DECISOES.md)

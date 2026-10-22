@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Globalization;
-using System.Diagnostics;
-using System.Windows.Input;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -24,13 +22,10 @@ public partial class MainWindow : Window
     private QueueCoordinator? _coordinator;
     private CancellationTokenSource? _cancellation;
     private Task? _activeTask;
-    private Task _refreshTask = Task.CompletedTask, _reviewLoad = Task.CompletedTask;
-    private readonly Action<string> _openFile;
-    private bool _openingFile;
+    private Task _refreshTask = Task.CompletedTask;
     private int _page;
     private bool _busy, _refreshRequested, _refreshBusy, _closeReady;
-    private long _detailRequest, _reviewRequest;
-    private (long FileId, AnalysisEvidence Evidence)? _reviewTarget;
+    private long _detailRequest;
     private readonly Dictionary<string, CheckBox> _formats = new(StringComparer.OrdinalIgnoreCase);
     private string SettingsFile => Path.Combine(_data, "settings.json");
     public void SelectPageForRender(int page) => SelectPage(Math.Clamp(page, 0, 3));
@@ -46,13 +41,9 @@ public partial class MainWindow : Window
         }
     }
 
-    public MainWindow(string data, Action<string>? openFile = null)
+    public MainWindow(string data)
     {
         InitializeComponent();
-        _openFile = openFile ?? (path =>
-        {
-            using var process = Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true, Verb = "open" });
-        });
         _data = data; _store = new(Path.Combine(data, "nexovideo.db"));
         foreach (var extension in Formats.All)
         {
@@ -170,10 +161,10 @@ public partial class MainWindow : Window
 
     private void SetBusy(bool busy)
     {
-        _busy = busy; ScanInputs.IsEnabled = SettingsPanel.IsEnabled = ReviewPanel.IsEnabled = !busy;
+        _busy = busy; ScanInputs.IsEnabled = SettingsPanel.IsEnabled = !busy;
         StartButton.IsEnabled = !busy; ResumeButton.IsEnabled = !busy && _job is not null;
         PauseButton.IsEnabled = CancelButton.IsEnabled = busy;
-        RemuxButton.IsEnabled = UntruncButton.IsEnabled = SaveReviewButton.IsEnabled = !busy;
+        RemuxButton.IsEnabled = UntruncButton.IsEnabled = !busy;
     }
 
     private async Task AnalyzeAsync(bool resume)
@@ -226,10 +217,8 @@ public partial class MainWindow : Window
             var id = _job.Id; var page = _page;
             var selected = (ResultsGrid.SelectedItem as FileRow)?.Id;
             var data = await Task.Run(() => (items: _store.Page(id, page), counts: _store.Counts(id)));
-            var reviewSelected = (ReviewGrid.SelectedItem as FileRow)?.Id;
             ResultsGrid.ItemsSource = data.items.Select(item => new FileRow(item)).ToArray();
             if (selected is not null) ResultsGrid.SelectedItem = ResultsGrid.Items.Cast<FileRow>().FirstOrDefault(row => row.Id == selected);
-            if (reviewSelected is not null) ReviewGrid.SelectedItem = ReviewGrid.Items.Cast<FileRow>().FirstOrDefault(row => row.Id == reviewSelected);
             PageLabel.Text = $"Página {page + 1} · até 100 arquivos"; UpdateCounts(data.counts);
             ResumeButton.IsEnabled = !_busy && (data.counts.Pending + data.counts.Cancelled + data.counts.Running > 0);
         }
@@ -255,151 +244,6 @@ public partial class MainWindow : Window
             var detail = await Task.Run(() => _store.Detail(row.Id));
             if (request != _detailRequest) return;
             DetailBox.Text = detail is null ? row.Item.Note.Length > 0 ? row.Item.Note : "Arquivo ainda não analisado." : JsonSerializer.Serialize(detail, QueueStore.Json);
-        }
-        catch (Exception ex) { ShowError(ex); }
-    }
-
-    private async void Review_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        _reviewLoad = LoadReviewAsync(ReviewGrid.SelectedItem as FileRow);
-        await _reviewLoad;
-    }
-
-    private async Task LoadReviewAsync(FileRow? row)
-    {
-        var request = Interlocked.Increment(ref _reviewRequest);
-        _reviewTarget = null;
-        // Nunca transportar o veredito, as confirmações ou as notas de um arquivo para outro.
-        HumanVerdictBox.SelectedIndex = SatisfactionBox.SelectedIndex = 0;
-        WholeFileCheck.IsChecked = CouldNotOpenCheck.IsChecked = false;
-        ReviewNotesBox.Text = "";
-        if (row is null) { ReviewPath.Text = "Selecione um arquivo já processado."; return; }
-        ReviewPath.Text = row.Item.Path;
-        ReviewStatus.Text = "Carregando a avaliação deste arquivo...";
-        try
-        {
-            var data = await Task.Run(() => (result: _store.Detail(row.Id), reviews: _store.ReviewHistory(row.Id)));
-            if (request != _reviewRequest) return;
-            if (row.Item.State is QueueState.Pending or QueueState.Running || data.result?.Evidence is not { Sha256.Length: 64 } evidence)
-            { ReviewStatus.Text = "Reanalise este arquivo para coletar a identidade e as evidências antes de avaliar."; return; }
-            _reviewTarget = (row.Id, evidence);
-            var review = data.reviews.LastOrDefault(r => r.AnalysisId == evidence.AnalysisId);
-            HumanVerdictBox.SelectedIndex = (int)(review?.Verdict ?? HumanVerdict.NotEvaluated);
-            SatisfactionBox.SelectedIndex = (int)(review?.Satisfaction ?? Satisfaction.NotEvaluated);
-            WholeFileCheck.IsChecked = review?.WatchedWholeFile ?? false;
-            CouldNotOpenCheck.IsChecked = review?.CouldNotOpen ?? false;
-            ReviewerBox.Text = review?.Reviewer ?? ReviewerBox.Text; PlayerBox.Text = review?.Player ?? PlayerBox.Text;
-            ReviewNotesBox.Text = review?.Notes ?? "";
-            ReviewStatus.Text = review is null ? "Sem avaliação registrada para esta análise." : $"Avaliação salva em {review.ReviewedUtc.ToLocalTime():g}. Alterações ficam no histórico.";
-        }
-        catch (Exception ex) { ShowError(ex); }
-    }
-
-    private async void Video_DoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        if (e.ChangedButton != MouseButton.Left || sender is not DataGrid grid || e.OriginalSource is not DependencyObject source) return;
-        // Cabeçalhos, barras de rolagem e espaço vazio não abrem o item previamente selecionado.
-        if (ItemsControl.ContainerFromElement(grid, source) is not DataGridRow { Item: FileRow row }) return;
-        e.Handled = true;
-        await OpenForReviewAsync(row);
-    }
-
-    private async void OpenReview_Click(object sender, RoutedEventArgs e)
-    {
-        if (ReviewGrid.SelectedItem is FileRow row) await OpenForReviewAsync(row);
-        else ReviewStatus.Text = "Selecione o arquivo que deseja abrir.";
-    }
-
-    private async Task OpenForReviewAsync(FileRow row)
-    {
-        if (_busy || _openingFile) return;
-        _openingFile = true;
-        try
-        {
-            SelectPage(2); ReviewGrid.SelectedItem = row;
-            await _reviewLoad;
-            if (_busy || (ReviewGrid.SelectedItem as FileRow)?.Id != row.Id) return;
-            var path = Path.GetFullPath(row.Item.Path);
-            if (!File.Exists(path)) throw new FileNotFoundException("Arquivo não encontrado. Confira o caminho antes de avaliar.", path);
-            _openFile(path);
-            ReviewStatus.Text = _reviewTarget is null ? "Abertura solicitada ao player padrão. Reanalise este arquivo antes de registrar uma avaliação." :
-                "Abertura solicitada ao player padrão. Após avaliar, preencha o resultado e clique em Salvar avaliação.";
-            try { await Task.Run(() => _store.Event(row.Item.JobId, $"Abertura solicitada ao player padrão; arquivo_id={row.Id}; caminho={path}. Não comprova reprodução ou avaliação.")); }
-            catch (Exception ex) { ShowError(new IOException("O arquivo foi encaminhado ao player, mas não foi possível registrar o evento de abertura.", ex)); }
-        }
-        catch (Exception ex) when (ex is IOException or Win32Exception or UnauthorizedAccessException or InvalidOperationException)
-        {
-            ReviewStatus.Text = "Não foi possível abrir no player. Isso não preenche nem classifica a avaliação automaticamente.";
-            ShowError(new IOException("Não foi possível abrir o arquivo. Confira se ele existe e se há um player padrão associado ao formato.", ex));
-        }
-        finally { _openingFile = false; }
-    }
-
-    private async Task<bool> AdvanceReviewAsync(long savedId)
-    {
-        await RefreshAsync();
-        if (_job is null) return false;
-        var rows = ReviewGrid.Items.Cast<FileRow>().ToArray();
-        var index = Array.FindIndex(rows, r => r.Id == savedId);
-        if (index < 0) return false;
-        if (index + 1 == rows.Length)
-        {
-            var counts = await Task.Run(() => _store.Counts(_job.Id));
-            if ((_page + 1L) * 100 >= counts.Total) return false;
-            _page++; await RefreshAsync();
-            rows = ReviewGrid.Items.Cast<FileRow>().ToArray(); index = -1;
-        }
-        if (index + 1 >= rows.Length) return false;
-        ReviewGrid.SelectedItem = rows[index + 1]; ReviewGrid.ScrollIntoView(rows[index + 1]);
-        await _reviewLoad;
-        return true;
-    }
-
-    private async void SaveReview_Click(object sender, RoutedEventArgs e)
-    {
-        if (_busy) return;
-        try
-        {
-            var target = _reviewTarget ?? throw new InvalidOperationException("Selecione um arquivo com evidência SHA-256.");
-            var review = new ManualReview(target.Evidence.AnalysisId, target.Evidence.Sha256,
-                (HumanVerdict)HumanVerdictBox.SelectedIndex, (Satisfaction)SatisfactionBox.SelectedIndex,
-                WholeFileCheck.IsChecked == true, ReviewerBox.Text.Trim(), ReviewNotesBox.Text, DateTimeOffset.UtcNow, PlayerBox.Text.Trim(), CouldNotOpenCheck.IsChecked == true);
-            _cancellation = new();
-            SetBusy(true); PauseButton.IsEnabled = false;
-            ReviewStatus.Text = "Conferindo os bytes antes de salvar a avaliação...";
-            var operation = new ValidationService(_store).SaveReviewAsync(target.FileId, review, _cancellation.Token);
-            _activeTask = operation; await operation;
-            var savedName = Path.GetFileName(ReviewPath.Text);
-            ReviewStatus.Text = "Avaliação salva; SHA-256 confirmado.";
-            if (AdvanceReviewCheck.IsChecked == true)
-            {
-                try
-                {
-                    var advance = AdvanceReviewAsync(target.FileId); _activeTask = advance;
-                    var moved = await advance;
-                    ReviewStatus.Text = moved ? $"Avaliação de {savedName} salva. Próximo arquivo selecionado; dois cliques para abrir." :
-                        $"Avaliação de {savedName} salva. Fim da lista; calcule ou exporte a comparação.";
-                }
-                catch (Exception ex) { ReviewStatus.Text = "Avaliação salva; não foi possível selecionar o próximo arquivo."; ShowError(ex); }
-            }
-        }
-        catch (OperationCanceledException) { ReviewStatus.Text = "Conferência cancelada; avaliação não salva."; }
-        catch (Exception ex) { ReviewStatus.Text = "Avaliação não salva."; ShowError(ex); }
-        finally { _activeTask = null; _cancellation?.Dispose(); _cancellation = null; SetBusy(false); }
-    }
-
-    private async void Compare_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (_busy || _job is null) throw new InvalidOperationException("Conclua ou pause uma sessão antes de comparar.");
-            var summary = await Task.Run(() => new ValidationService(_store).Summary(_job.Id));
-            var m = summary.Overall;
-            static string Rate(double? value) => value is null ? "sem base" : value.Value.ToString("P1", CultureInfo.GetCultureInfo("pt-BR"));
-            ComparisonText.Text = $"{m.Comparable}/{m.Total} pares comparáveis; {m.ManuallyEvaluated} avaliações. " +
-                $"Acertos com problema: {m.TruePositive}; acertos sem problema: {m.TrueNegative}; falsos positivos: {m.FalsePositive}; falhas não detectadas: {m.FalseNegative}.\n" +
-                $"Precisão dos alertas: {Rate(m.Precision)} · Sensibilidade: {Rate(m.Recall)} · Acurácia: {Rate(m.Accuracy)}. " +
-                $"Automático inconclusivo: {m.AutomaticInconclusive}; revisão ausente/incompleta: {m.MissingOrIneligibleReview}. Grupos por modo/formato no JSON.";
         }
         catch (Exception ex) { ShowError(ex); }
     }
@@ -489,9 +333,9 @@ public partial class MainWindow : Window
             if (dialog.ShowDialog(this) != true) return;
             var jobId = _job.Id; SetBusy(true); exporting = true;
             PauseButton.IsEnabled = CancelButton.IsEnabled = false;
-            var operation = Task.Run(() => new ValidationService(_store).ExportJson(jobId, dialog.FileName));
+            var operation = Task.Run(() => new EvidenceReportService(_store).ExportJson(jobId, dialog.FileName));
             _activeTask = operation; await operation;
-            MessageBox.Show(this, "Relatório completo exportado, incluindo logs e avaliações.", "NexoVideo");
+            MessageBox.Show(this, "Relatório de evidências exportado, incluindo os logs por arquivo.", "NexoVideo");
         }
         catch (Exception ex) { ShowError(ex); }
         finally { if (exporting) { _activeTask = null; SetBusy(false); } }

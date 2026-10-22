@@ -1,9 +1,9 @@
 # NexoVideo
 
 Aplicativo Windows para analisar vídeos em lote e gerar candidatos separados de recuperação.
-**Estado: 0.1.0-alpha.2, pré-release de teste.** Não é beta homologada nem garantia de recuperação.
+**Estado: 0.1.0-alpha.3, pré-release de teste.** Não é beta homologada nem garantia de recuperação.
 
-Para outra máquina Windows x64, use o [release](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.2):
+Para outra máquina Windows x64, use o [release](https://github.com/gustavotoigo-max/NexoVideo/releases/tag/v0.1.0-alpha.3):
 instalador ou ZIP com .NET incluído. [Instalação e primeiro uso](docs/USAR_RELEASE.md).
 
 ## Usar a versão de desenvolvimento
@@ -19,8 +19,8 @@ Eles não são incluídos no pacote do aplicativo; redistribuição depende da r
 4. Use **Retomar fila** para continuar a sessão persistida. Itens concluídos e inalterados em tamanho/data são reutilizados.
 5. Selecione um resultado e abra **Recuperação** para ver o diagnóstico e gerar candidato por remux ou Untrunc.
 6. Escolha uma pasta separada para candidatos. Untrunc exige referência compatível e opera sobre cópias temporárias.
-7. Em **Relatórios**, registre sua avaliação manual e exporte o JSON completo da sessão para um nome novo.
-   O coletor compara sua avaliação com os alertas e inclui hashes, intervalos e logs: [como validar](docs/VALIDACAO_MANUAL.md).
+7. Em **Relatórios**, exporte o JSON completo da sessão para um nome novo.
+   O coletor inclui hashes, intervalos e logs para comparação posterior com a lista do corruptor: [como coletar](docs/COLETA_EVIDENCIAS.md).
 
 Os dados ficam em `%LOCALAPPDATA%\NexoVideo`: `nexovideo.db`, configurações e logs.
 `--data PASTA` permite escolher outro local. O banco deve ficar em armazenamento local saudável.

@@ -64,8 +64,8 @@
             </Border>
             <Border Grid.Row="3" Style="{StaticResource Card}" Padding="0"><Grid><Grid.RowDefinitions><RowDefinition Height="56" /><RowDefinition Height="*" /><RowDefinition Height="45" /></Grid.RowDefinitions>
               <DockPanel Margin="18,0"><TextBlock Text="Resultados da sessão" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock x:Name="PageLabel" Text="Página 1" Style="{StaticResource Muted}" HorizontalAlignment="Right" VerticalAlignment="Center" /></DockPanel>
-              <DataGrid x:Name="ResultsGrid" Grid.Row="1" SelectionMode="Single" SelectionChanged="Results_SelectionChanged" MouseDoubleClick="Video_DoubleClick"><DataGrid.Columns><DataGridTextColumn Header="ARQUIVO" ElementStyle="{StaticResource TableText}" Binding="{Binding Name}" Width="1.1*" /><DataGridTextColumn Header="TAMANHO" ElementStyle="{StaticResource TableText}" Binding="{Binding SizeLabel}" Width="95" /><DataGridTextColumn Header="FILA" ElementStyle="{StaticResource TableText}" Binding="{Binding StateLabel}" Width="110" /><DataGridTextColumn Header="DIAGNÓSTICO" ElementStyle="{StaticResource TableText}" Binding="{Binding Conclusion}" Width="1.6*" /></DataGrid.Columns></DataGrid>
-              <DockPanel Grid.Row="2" Margin="18,4"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="Anterior" Click="Previous_Click" Style="{StaticResource Secondary}" Padding="12,5" Margin="0,0,6,0" /><Button Content="Próxima" Click="Next_Click" Style="{StaticResource Secondary}" Padding="12,5" /></StackPanel><TextBlock Text="Dois cliques abrem no player padrão e preparam a avaliação." Style="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center" /></DockPanel>
+              <DataGrid x:Name="ResultsGrid" Grid.Row="1" SelectionMode="Single" SelectionChanged="Results_SelectionChanged"><DataGrid.Columns><DataGridTextColumn Header="ARQUIVO" ElementStyle="{StaticResource TableText}" Binding="{Binding Name}" Width="1.1*" /><DataGridTextColumn Header="TAMANHO" ElementStyle="{StaticResource TableText}" Binding="{Binding SizeLabel}" Width="95" /><DataGridTextColumn Header="FILA" ElementStyle="{StaticResource TableText}" Binding="{Binding StateLabel}" Width="110" /><DataGridTextColumn Header="DIAGNÓSTICO" ElementStyle="{StaticResource TableText}" Binding="{Binding Conclusion}" Width="1.6*" /></DataGrid.Columns></DataGrid>
+              <DockPanel Grid.Row="2" Margin="18,4"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="Anterior" Click="Previous_Click" Style="{StaticResource Secondary}" Padding="12,5" Margin="0,0,6,0" /><Button Content="Próxima" Click="Next_Click" Style="{StaticResource Secondary}" Padding="12,5" /></StackPanel><TextBlock Text="Selecione um arquivo para consultar o diagnóstico e as opções de recuperação." Style="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center" /></DockPanel>
             </Grid></Border>
             <StackPanel Grid.Row="4" Margin="0,16,0,0"><DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button x:Name="PauseButton" Content="Pausar após arquivo" Click="Pause_Click" Style="{StaticResource Secondary}" Padding="12,6" IsEnabled="False" Margin="0,0,8,0" /><Button x:Name="CancelButton" Content="Cancelar" Click="Cancel_Click" Background="{DynamicResource Nx.Navy}" Padding="12,6" IsEnabled="False" /></StackPanel><StackPanel><TextBlock x:Name="StageText" Text="Pronto para iniciar" FontWeight="SemiBold" /><TextBlock x:Name="CurrentFile" Text="A análise não altera os arquivos de origem." Style="{StaticResource Muted}" FontSize="11" Margin="0,3,0,0" /></StackPanel></DockPanel><ProgressBar x:Name="TotalProgress" Height="5" Margin="0,12,0,0" Foreground="{DynamicResource Nx.Blue}" Background="{DynamicResource Nx.Border}" /></StackPanel>
           </Grid></ScrollViewer>
@@ -75,38 +75,14 @@
           <TextBlock Text="Detalhes do diagnóstico" FontSize="17" FontWeight="SemiBold" Margin="0,26,0,12" /><TextBox x:Name="DetailBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Height="370" FontFamily="{DynamicResource Nx.Mono}" Text="Nenhum arquivo selecionado." />
         </StackPanel></ScrollViewer></TabItem>
         <TabItem><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="32,28">
-          <TextBlock Text="Relatórios e validação" FontSize="28" FontWeight="Bold" />
-          <TextBlock Text="Avalie os mesmos arquivos e compare sua observação com os alertas da análise." Style="{StaticResource Muted}" Margin="0,6,0,24" />
-          <Border Style="{StaticResource Card}" Margin="0,0,0,18"><StackPanel x:Name="ReviewPanel">
-            <TextBlock Text="Avaliação manual do original" FontSize="17" FontWeight="SemiBold" />
-            <TextBlock Text="Dê dois cliques no arquivo para abrir no player padrão. Avalie a reprodução e salve abaixo. A lista omite o diagnóstico para reduzir influência na avaliação." Style="{StaticResource Muted}" Margin="0,10,0,12" />
-            <DataGrid x:Name="ReviewGrid" Height="180" SelectionMode="Single" SelectionChanged="Review_SelectionChanged" MouseDoubleClick="Video_DoubleClick" ItemsSource="{Binding ItemsSource, ElementName=ResultsGrid}"><DataGrid.Columns>
-              <DataGridTextColumn Header="ARQUIVO" Binding="{Binding Name}" ElementStyle="{StaticResource TableText}" Width="*" />
-              <DataGridTextColumn Header="FILA" Binding="{Binding StateLabel}" ElementStyle="{StaticResource TableText}" Width="130" />
-            </DataGrid.Columns></DataGrid>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,12"><Button Content="Anterior" Click="Previous_Click" Style="{StaticResource Secondary}" Margin="0,0,8,0" /><Button Content="Próxima" Click="Next_Click" Style="{StaticResource Secondary}" /></StackPanel>
-            <Button Content="Abrir selecionado no player padrão" Click="OpenReview_Click" Style="{StaticResource Secondary}" HorizontalAlignment="Left" Margin="0,0,0,12" />
-            <TextBlock x:Name="ReviewPath" Text="Selecione um arquivo já processado." Style="{StaticResource Muted}" Margin="0,0,0,12" />
-            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-              <TextBlock Text="Problema observado na reprodução" /><TextBlock Grid.Column="1" Text="Qualidade percebida" Margin="12,0,0,0" />
-              <ComboBox x:Name="HumanVerdictBox" Grid.Row="1" SelectedIndex="0" Margin="0,6,0,12"><ComboBoxItem Content="Não avaliado" /><ComboBoxItem Content="Sem problema observado" /><ComboBoxItem Content="Problema observado" /><ComboBoxItem Content="Inconclusivo" /></ComboBox>
-              <ComboBox x:Name="SatisfactionBox" Grid.Row="1" Grid.Column="1" SelectedIndex="0" Margin="12,6,0,12"><ComboBoxItem Content="Não avaliada" /><ComboBoxItem Content="Satisfatória" /><ComboBoxItem Content="Parcial" /><ComboBoxItem Content="Insatisfatória" /></ComboBox>
-              <TextBlock Grid.Row="2" Text="Avaliador" /><TextBlock Grid.Row="2" Grid.Column="1" Text="Player e versão" Margin="12,0,0,0" />
-              <TextBox x:Name="ReviewerBox" Grid.Row="3" Margin="0,6,0,12" MaxLength="200" /><TextBox x:Name="PlayerBox" Grid.Row="3" Grid.Column="1" Margin="12,6,0,12" MaxLength="200" />
-            </Grid>
-            <CheckBox x:Name="WholeFileCheck" Content="Reproduzi o arquivo inteiro, verificando áudio e vídeo presentes" Margin="0,0,0,12" />
-            <CheckBox x:Name="CouldNotOpenCheck" Content="Não consegui iniciar a reprodução no player; registrei o sintoma nas notas" Margin="0,0,0,12" />
-            <TextBlock Text="Onde ocorreu: trilha, minuto/segundo e sintoma (imagem, áudio, travamento, sincronia)" />
-            <TextBox x:Name="ReviewNotesBox" Height="75" Margin="0,6,0,12" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" MaxLength="8000" />
-            <CheckBox x:Name="AdvanceReviewCheck" Content="Selecionar o próximo arquivo após salvar" IsChecked="True" Margin="0,0,0,12" />
-            <Button x:Name="SaveReviewButton" Content="Salvar avaliação e conferir SHA-256" Click="SaveReview_Click" HorizontalAlignment="Left" />
-            <TextBlock x:Name="ReviewStatus" Style="{StaticResource Muted}" Margin="0,10,0,0" Text="O registro só entra na comparação se pertencer aos mesmos bytes e tiver reprodução inteira ou falha confirmada ao abrir." />
-          </StackPanel></Border>
-          <Border Style="{StaticResource Card}"><StackPanel><TextBlock Text="Comparação e evidências da sessão" FontSize="17" FontWeight="SemiBold" />
-            <TextBlock x:Name="ReportSummary" Style="{StaticResource Muted}" Margin="0,12,0,12" Text="Nenhuma sessão disponível." />
-            <StackPanel Orientation="Horizontal"><Button Content="Calcular comparação" Click="Compare_Click" Style="{StaticResource Secondary}" Margin="0,0,12,0" /><Button Content="Exportar relatório completo JSON" Click="Export_Click" /></StackPanel>
-            <TextBlock x:Name="ComparisonText" Style="{StaticResource Muted}" Margin="0,12,0,0" Text="Ainda sem comparação. Precisão, sensibilidade e acurácia aparecem quando há pares elegíveis." />
-            <TextBlock Text="O JSON inclui avaliações, matriz de confusão, opções, hashes, trilhas, intervalos, comandos, mensagens e logs. Resultados sem base comparável e modo rápido não contam como acerto." Style="{StaticResource Muted}" Margin="0,12,0,0" />
+          <TextBlock Text="Relatórios" FontSize="28" FontWeight="Bold" />
+          <TextBlock Text="Exporte as evidências da análise em lote para comparar com a lista do corruptor." Style="{StaticResource Muted}" Margin="0,6,0,24" />
+          <Border Style="{StaticResource Card}"><StackPanel>
+            <TextBlock Text="Evidências da sessão" FontSize="17" FontWeight="SemiBold" />
+            <TextBlock x:Name="ReportSummary" Style="{StaticResource Muted}" Margin="0,12,0,18" Text="Nenhuma sessão disponível." />
+            <Button Content="Exportar relatório completo JSON" Click="Export_Click" HorizontalAlignment="Left" />
+            <TextBlock Text="Inclui identidade SHA-256, resultado automático, trilhas, intervalos, comandos e logs por arquivo. Não é necessário abrir os vídeos nem preencher avaliações." Style="{StaticResource Muted}" Margin="0,16,0,0" />
+            <TextBlock Text="A comparação com a referência do corruptor será feita posteriormente. Este relatório não calcula precisão sem essa referência. Registros antigos de avaliação são preservados apenas como histórico." Style="{StaticResource Muted}" Margin="0,12,0,0" />
           </StackPanel></Border>
         </StackPanel></ScrollViewer></TabItem>
         <TabItem><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="SettingsPanel" Margin="32,28"><TextBlock Text="Configurações" FontSize="28" FontWeight="Bold" /><TextBlock Text="Ferramentas externas, amostragem e limites da análise. A fila permanece sequencial." Style="{StaticResource Muted}" Margin="0,6,0,24" />

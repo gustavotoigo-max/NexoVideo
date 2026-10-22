@@ -23,7 +23,7 @@ foreach ($taskName in @('coreclr.dll','hostfxr.dll','PresentationFramework.dll',
     if (!(Test-Path -LiteralPath (Join-Path $taskPublish $taskName))) { throw "Dependência ausente: $taskName" }
 }
 Copy-Item -LiteralPath 'docs\USAR_RELEASE.md' -Destination (Join-Path $taskPublish 'LEIA-ME.md')
-Copy-Item -LiteralPath 'docs\VALIDACAO_MANUAL.md' -Destination $taskPublish
+Copy-Item -LiteralPath 'docs\COLETA_EVIDENCIAS.md' -Destination $taskPublish
 Copy-Item -LiteralPath 'distribution\AVISOS-TERCEIROS.txt' -Destination $taskPublish
 $taskLicenses = Join-Path $taskPublish 'licenses'
 New-Item -ItemType Directory -Path $taskLicenses | Out-Null

@@ -1,4 +1,4 @@
-NexoVideo 0.1.0-alpha.2 — avisos de distribuição
+NexoVideo 0.1.0-alpha.3 — avisos de distribuição
 
 Pacote de teste publicado por gustavotoigo-max:
 https://github.com/gustavotoigo-max/NexoVideo

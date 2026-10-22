@@ -95,6 +95,6 @@ public sealed class QueueCoordinator(QueueStore store, MediaAnalyzer analyzer)
 
     public void ExportJson(long jobId, string destination)
     {
-        new ValidationService(store).ExportJson(jobId, destination);
+        new EvidenceReportService(store).ExportJson(jobId, destination);
     }
 }
